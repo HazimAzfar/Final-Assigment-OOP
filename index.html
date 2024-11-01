@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traveler Weather Dashboard</title>
+    <style>
+        /* General Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Background Theme */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #4682B4;
+            padding: 15px 0;
+            color: white;
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* Change header color on scroll */
+        .scrolled {
+            background-color: #4169E1;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Input and Button Styling */
+        #city_input {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            width: calc(100% - 130px);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #4682B4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #4169E1;
+        }
+
+        /* Weather Card Styling */
+        .weather-card {
+            background: #ffffffaa;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .weather-card:hover {
+            background-color: white; /* Light blue background on hover */
+            transform: scale(1.05); /* Slightly increase the size */
+        }
+
+        .weather-card h3 {
+            font-size: 1.3rem;
+            color: #4682B4;
+            margin-bottom: 10px;
+        }
+
+        .weather-card p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Weather Icon */
+        .weather-icon {
+            width: 50px; /* Set a consistent width */
+            height: 50px; /* Set a consistent height */
+            margin-top: 10px;
+            border-radius: 50%; /* Make edges rounded */
+        }
+
+        /* Flexbox for forecast cards */
+        .forecast-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        #hourlyForecastContainer {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: rgba(249, 249, 249, 0.8); /* Slightly transparent */
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s; /* Smooth transition for scaling */
+}
+
+#hourlyForecastContainer:hover {
+    transform: scale(1.05); /* Increase size on hover */
+}
+
+#hourlyForecast {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px;
+    gap: 10px; /* Add gap between items */
+}
+
+.hourly-forecast {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 30px; /* Increased padding for more space */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-width: 205px; /* Increased minimum width for larger boxes */
+    margin-right: 15px;
+    display: inline-block;
+    transition: transform 0.3s, background-color 0.3s; /* Match transition with other boxes */
+}
+
+.hourly-forecast:hover {
+    background-color: #e6f7ff; /* Light blue background on hover */
+    transform: scale(1.05); /* Slightly increase the size on hover */
+}
+
+
+.hourly-forecast h4 {
+    margin: 5px 0; /* Adjust margin for better spacing */
+    font-size: 1em; /* Consistent font size */
+    color: #007BFF; /* Weather condition color */
+}
+
+.hourly-forecast p {
+    margin: 3px 0; /* Reduce margin for better alignment */
+    font-size: 0.9em; /* Consistent font size */
+    color: #555; /* Text color for clarity */
+    max-width: 100%; /* Ensure text doesn't overflow */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
+    white-space: nowrap; /* Prevent wrapping of text */
+}
+
+.hourly-forecast img {
+    width: 40px; /* Consistent width for weather icons */
+    height: 40px; /* Consistent height for weather icons */
+    margin-top: 5px;
+}
+
+        /* Clothing Recommendation Section */
+        .clothing-recommendation {
+            background: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin: 20px 0;
+            display: flex; /* Use flexbox for alignment */
+            align-items: center; /* Center items vertically */
+            gap: 15px; /* Space between items */
+            width: 100%;
+            max-width: 800px;
+            transition: transform 0.3s, background-color 0.3s; /* Transition for hover effect */
+        }
+
+        .clothing-recommendation:hover {
+            background-color: #e6f7ff; /* Light blue background on hover */
+            transform: scale(1.05); /* Slightly increase the size */
+        }
+
+        .clothing-recommendation img {
+        width: 300px; /* Match the width of .weather-icon */
+        height: 300px; /* Match the height of .weather-icon */
+        margin-top: 10px;
+        border-radius: 50%; /* Make edges rounded like .weather-icon */
+        display: block;
+    }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding: 10px;
+            background-color: #4682B4;
+            color: white;
+            text-align: center;
+            font-size: 0.9rem;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        Traveler Weather Dashboard
+    </header>
+
+    <main>
+        <h1>Welcome to Your Personal Travel Advisories</h1>
+        <h2>Check the Weather</h2>
+
+        <div class="container">
+            <!-- City Input -->
+            <input type="text" id="city_input" placeholder="Enter City" value="Kuala Lumpur, Malaysia">
+            <button onclick="buttonClicked()">Enter</button>
+
+            <!-- Save Button -->
+            <button id="saveButton" onclick="saveWeatherData()">Add data</button>
+
+            <!-- Button to go to planner.html -->
+            <button onclick="goToPlanner()">Go to Planner</button> <!-- New button -->
+
+            <!-- Current Weather Section -->
+            <div class="weather-card current-weather">
+                <h3>Current Weather</h3>
+                <p id="demo3"></p>
+                <p id="demo1"></p>
+                <p id="demo2"></p>
+                <p id="demo4"></p>
+                <p id="demo8"></p>
+                <p id="demo9"></p>
+                <p id="demo10"></p>
+                <img id="weatherIcon" class="weather-icon" alt="Current Weather Icon">
+            </div>
+
+            <!-- Forecast Section -->
+            <div class="forecast-container">
+                <div class="weather-card">
+                    <h3>Yesterday</h3>
+                    <p id="yesterdayDate"></p>
+                    <p id="yesterdayTemp"></p>
+                    <p id="yesterdaySunrise"></p>
+                    <p id="yesterdaySunset"></p>
+                    <p id="yesterdayCondition"></p>
+                    <img id="yesterdayIcon" class="weather-icon" alt="Yesterday's Weather Icon">
+                </div>
+
+                <div class="weather-card">
+                    <h3>Today</h3>
+                    <p id="todayDate"></p>
+                    <p id="todayTemp"></p>
+                    <p id="todaySunrise"></p>
+                    <p id="todaySunset"></p>
+                    <p id="todayCondition"></p>
+                    <img id="todayIcon" class="weather-icon" alt="Today's Weather Icon">
+                </div>
+
+                <div class="weather-card">
+                    <h3>Tomorrow</h3>
+                    <p id="tomorrowDate"></p>
+                    <p id="tomorrowTemp"></p>
+                    <p id="tomorrowSunrise"></p>
+                    <p id="tomorrowSunset"></p>
+                    <p id="tomorrowCondition"></p>
+                    <img id="tomorrowIcon" class="weather-icon" alt="Tomorrow's Weather Icon">
+                </div>
+            </div>
+            <div id="hourlyForecastContainer">
+                <h3>Hourly Forecast for 12 hours</h3>
+                <div id="hourlyForecast"></div>
+            </div>
+
+            <!-- Clothing Recommendations Section -->
+            <div class="clothing-recommendation">
+                <img id="clothingImg" alt="Clothing Recommendation Image">
+                <div>
+                    <h3>Clothing Recommendations</h3>
+                    <p id="clothingRecommendation"></p>
+                    <p>Check back for real-time updates on clothing suggestions based on the current weather conditions!</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2024 Traveler Weather Dashboard | Made with 💙 for weather enthusiasts
+    </footer>
+
+    <script src="traveler.js"></script>
+</body>
+</html>

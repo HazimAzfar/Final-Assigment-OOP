@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traveler Weather Dashboard</title>
+    <style>
+        /* General Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Background Theme */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB, #f0f8ff);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #4682B4;
+            padding: 10px 0;
+            color: white;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* Change header color on scroll */
+        .scrolled {
+            background-color: #4169E1;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px; /* Space for fixed header */
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Input and Button Styling */
+        #city_input {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            width: calc(100% - 130px);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #4682B4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #4169E1;
+        }
+
+        /* Weather Card Styling */
+        .weather-card {
+            background: #ffffffaa;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .weather-card h3 {
+            font-size: 1.3rem;
+            color: #4682B4;
+            margin-bottom: 10px;
+        }
+
+        .weather-card p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Weather Icon */
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+            margin-top: 10px;
+        }
+
+        /* Flexbox for forecast cards */
+        .forecast-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Clothing Recommendation Section */
+        .clothing-recommendation {
+            background: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Advisory Section */
+        .advisory-section {
+            background: #fff3cd;
+            border-left: 6px solid #ffeeba;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding: 10px;
+            background-color: #4682B4;
+            color: white;
+            text-align: center;
+            font-size: 0.9rem;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        Traveler Weather Dashboard
+    </header>
+
+    <main>
+        <h1>Welcome to Your Personal Travel Advisories</h1>
+        <h2>Check the Weather</h2>
+
+        <div class="container">
+            <!-- City Input -->
+            <input type="text" id="city_input" placeholder="Enter City" value="Kuala Lumpur, Malaysia">
+            <button onclick="buttonClicked()">Enter</button>
+
+            <!-- Button to go to planner.html -->
+            <button onclick="location.href='planner.html'" style="padding: 10px 20px; font-size: 16px; margin-top: 10px;">Go to Planner</button>
+
+            <!-- Current Weather Section -->
+            <div class="weather-card current-weather">
+                <h3>Current Weather</h3>
+                <p id="demo3"></p>
+                <p id="demo1"></p>
+                <p id="demo2"></p>
+                <p id="demo4"></p>
+                <p id="demo8"></p>
+                <p id="demo9"></p>
+                <p id="demo10"></p>
+                <img id="weatherIcon" class="weather-icon" alt="Current Weather Icon">
+            </div>
+
+            <!-- Forecast Section -->
+            <div class="forecast-container">
+                <!-- Yesterday's Forecast -->
+                <div class="weather-card">
+                    <h3>Yesterday</h3>
+                    <p id="yesterdayDate"></p>
+                    <p id="yesterdayTemp"></p>
+                    <p id="yesterdaySunrise"></p>
+                    <p id="yesterdaySunset"></p>
+                    <p id="yesterdayCondition"></p>
+                    <img id="yesterdayIcon" class="weather-icon" alt="Yesterday's Weather Icon">
+                </div>
+
+                <!-- Today's Forecast -->
+                <div class="weather-card">
+                    <h3>Today</h3>
+                    <p id="todayDate"></p>
+                    <p id="todayTemp"></p>
+                    <p id="todaySunrise"></p>
+                    <p id="todaySunset"></p>
+                    <p id="todayCondition"></p>
+                    <img id="todayIcon" class="weather-icon" alt="Today's Weather Icon">
+                </div>
+
+                <!-- Tomorrow's Forecast -->
+                <div class="weather-card">
+                    <h3>Tomorrow</h3>
+                    <p id="tomorrowDate"></p>
+                    <p id="tomorrowTemp"></p>
+                    <p id="tomorrowSunrise"></p>
+                    <p id="tomorrowSunset"></p>
+                    <p id="tomorrowCondition"></p>
+                    <img id="tomorrowIcon" class="weather-icon" alt="Tomorrow's Weather Icon">
+                </div>
+            </div>
+
+            <!-- Clothing Recommendations Section -->
+            <div class="clothing-recommendation">
+                <h3>Clothing Recommendations</h3>
+                <p id="clothingRecommendation"></p>
+                <p>Check back for real-time updates on clothing suggestions based on the current weather conditions!</p>
+            </div>
+
+            <!-- Advisory Section -->
+            <div class="advisory-section">
+                <h3>Travel Advisories</h3>
+                <p>Stay informed about the latest travel advisories for your destination.</p>
+                <p id="travelAdvisory"></p>
+                <button onclick="checkTravelAdvisory()">Check Advisories</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2024 Traveler Weather Dashboard | Made with 💙 for weather enthusiasts
+    </footer>
+
+    <script src="traveler.js"></script>
+    <script>
+        // JavaScript to change header color on scroll
+        window.addEventListener("scroll", function() {
+            const header = document.getElementById("header");
+            if (window.scrollY > 50) {
+                header.classList.add("scrolled");
+            } else {
+                header.classList.remove("scrolled");
+            }
+        });
+
+        // Trigger search on page load with default city
+        window.onload = function() {
+            buttonClicked();
+            checkTravelAdvisory();
+        };
+
+        // Example function to fetch travel advisories
+        function checkTravelAdvisory() {
+            // Simulate fetching advisories (you can replace this with actual API call)
+            document.getElementById("travelAdvisory").innerText = "No current advisories for Kuala Lumpur. Stay safe!";
+        }
+    </script>
+</body>
+</html>
